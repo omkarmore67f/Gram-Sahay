@@ -10,7 +10,7 @@ type Complaint = {
   category: string;
   description: string;
   location: string;
-  status: "pending" | "in_progress" | "resolved";
+  status: "pending" | "in_progress" | "resolved" | "rejected";
   date: string;
 };
 
@@ -28,12 +28,14 @@ const statusLabels: Record<string, string> = {
   pending: "લંબાયેલ",
   in_progress: "કાર્યવાહી હેઠળ",
   resolved: "નિકાલ થયેલ",
+  rejected: "નકારી",
 };
 
 const statusColors: Record<string, string> = {
   pending: "bg-amber-100 text-amber-800 border-amber-200",
   in_progress: "bg-blue-100 text-blue-800 border-blue-200",
   resolved: "bg-emerald-100 text-emerald-800 border-emerald-200",
+  rejected: "bg-red-100 text-red-800 border-red-200",
 };
 
 const categoryLabels: Record<string, string> = {
@@ -186,14 +188,18 @@ export const ComplaintTrackingPage: React.FC<ComplaintTrackingPageProps> = ({ on
                         <div className="flex items-center gap-2 text-xs">
                           <div
                             className={`h-2 w-2 rounded-full ${
-                              complaint.status !== "pending" ? "bg-emerald-500" : "bg-amber-500"
+                              complaint.status !== "pending" && complaint.status !== "rejected"
+                                ? "bg-emerald-500"
+                                : complaint.status === "rejected"
+                                ? "bg-red-500"
+                                : "bg-amber-500"
                             }`}
                           />
                           <span className="text-emerald-900/70">
                             ફરિયાદ નોંધાઈ: {formatDate(complaint.date)}
                           </span>
                         </div>
-                        {complaint.status !== "pending" && (
+                        {complaint.status !== "pending" && complaint.status !== "rejected" && (
                           <div className="flex items-center gap-2 text-xs">
                             <div
                               className={`h-2 w-2 rounded-full ${
@@ -205,6 +211,12 @@ export const ComplaintTrackingPage: React.FC<ComplaintTrackingPageProps> = ({ on
                                 ? "નિકાલ થયેલ"
                                 : "કાર્યવાહી હેઠળ"}
                             </span>
+                          </div>
+                        )}
+                        {complaint.status === "rejected" && (
+                          <div className="flex items-center gap-2 text-xs">
+                            <div className="h-2 w-2 rounded-full bg-red-500" />
+                            <span className="text-red-900/70">ફરિયાદ નકારી</span>
                           </div>
                         )}
                       </div>
